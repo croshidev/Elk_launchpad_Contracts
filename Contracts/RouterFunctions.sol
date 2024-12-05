@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+import "https://raw.githubusercontent.com/croshidev/Elk_launchpad_Contracts/main/Contracts/IRouter.sol";
+
 contract RouterFunctions {
 
     function addLiquidity(
