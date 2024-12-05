@@ -9,15 +9,13 @@ interface IRouter {
 
     // Liquidity Management
     function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint amountADesired,
-        uint amountBDesired,
-        uint amountAMin,
-        uint amountBMin,
+        address token,
+        uint amountTokenDesired,
+        uint amountTokenMin,
+        uint amountAVAXMin,
         address to,
         uint deadline
-    ) external returns (uint amountA, uint amountB, uint liquidity);
+    ) external payable returns (uint amountA, uint amountB, uint liquidity);
 
     function addLiquidityAVAX(
         address token,
@@ -131,4 +129,69 @@ interface IRouter {
     function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);
     function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
     function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
+}
+
+contract SwwapFunctions {
+
+    function addLiquidity(
+        address router,
+        address token,
+        uint256 liquidityTokens,
+        uint256 nativeCoinForLiquidity,
+        address deadAddress,
+        uint256 routerType
+    ) internal {
+        if (routerType==0)
+        {
+        IRouter(router).addLiquidity{value: nativeCoinForLiquidity}(
+            token,
+            liquidityTokens,
+            0, 
+            0, 
+            deadAddress,
+            block.timestamp + 3600
+        );
+        if (routerType==1){
+        IRouter(router).addLiquidityAVAX{value: nativeCoinForLiquidity}(
+            token,
+            liquidityTokens,
+            0, 
+            0, 
+            deadAddress,
+            block.timestamp + 3600
+        );
+    }
+        }
+}
+
+    function swapTokensForTokens(
+        address router,
+        address burnToken,
+        uint256 burnfee,
+        address deadAddress,
+        uint256 routerType
+    ) internal
+    {
+        address[] memory path = new address[](2);
+        path[0] = IRouter(router).WAVAX(); 
+        path[1] = burnToken;  
+        
+        if (routerType == 0) {
+            IRouter(router).swapExactAVAXForTokensSupportingFeeOnTransferTokens{value: burnfee}(
+                0, 
+                path, 
+                deadAddress, 
+                block.timestamp + 3600  
+            );
+        } else if (routerType == 1) {
+           
+    
+            IRouter(router).swapExactAVAXForTokensSupportingFeeOnTransferTokens{value: burnfee}(
+                0,  
+                path, 
+                deadAddress, 
+                block.timestamp + 3600 
+            );
+        }
+    }
 }

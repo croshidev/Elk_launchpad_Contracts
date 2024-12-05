@@ -1,0 +1,7 @@
+{
+  "name": "elkfinance_launchpad_contracts",
+  "version": "1.0.0",
+  "description": "ElkFinance LaunchPad Contracts",
+  "main": "contracts",
+  "license": "MIT"
+}
